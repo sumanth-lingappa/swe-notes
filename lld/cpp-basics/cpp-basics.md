@@ -426,3 +426,312 @@ Use raw `new` / `delete` mainly in low-level code that implements memory managem
 | Borrow; null is meaningful | `T*` |
 
 > Memory rule: **Use a raw pointer to borrow, not to own. Use an ordinary object when possible; otherwise prefer `unique_ptr`.**
+
+---
+
+## Type casting: converting one type to another
+
+A **cast** tells C++ to treat or convert a value as another type.
+
+There are two broad kinds:
+
+```text
+Implicit conversion  → C++ performs it automatically.
+Explicit conversion  → You clearly request it with syntax such as static_cast<T>(value).
+```
+
+Prefer the named C++ casts. Avoid C-style casts such as `(int)value` because they hide which kind of conversion is happening.
+
+### 1. Implicit conversion
+
+C++ automatically converts when it considers the conversion safe or natural enough.
+
+```cpp
+int count = 42;
+
+// int becomes double automatically.
+double average = count;
+
+// char becomes int automatically.
+int asciiCode = 'A'; // 65 in common character encodings.
+```
+
+```text
+int 42 ──implicit conversion──► double 42.0
+```
+
+Be careful: automatic does not always mean lossless.
+
+```cpp
+double price = 19.99;
+
+// VALID, but data after the decimal point is discarded.
+int wholePrice = price; // 19
+```
+
+### 2. Direct initialization and explicit conversion
+
+These both make the destination type visible:
+
+```cpp
+double price = 19.99;
+
+int first = static_cast<int>(price); // Explicit conversion: 19
+int second(price);                   // Direct initialization: 19
+int third{static_cast<int>(price)};  // Brace initialization after explicit conversion: 19
+```
+
+For ordinary numeric conversion, prefer `static_cast` because it is easy to search for and shows intent.
+
+```cpp
+int completed = 3;
+int total = 4;
+
+// INVALID LOGIC: integer division happens first, so result is 0.
+double wrongPercentage = completed / total * 100;
+
+// VALID: convert one operand before division.
+double percentage = static_cast<double>(completed) / total * 100; // 75.0
+```
+
+---
+
+## Named C++ casts
+
+| Cast | Main use | Runtime check? | Typical safety |
+| --- | --- | --- | --- |
+| `static_cast<T>` | Numeric conversion; safe/known inheritance conversion | No | Usually the default explicit cast |
+| `dynamic_cast<T>` | Downcasting polymorphic base pointers/references | Yes | Safe runtime-checked inheritance cast |
+| `const_cast<T>` | Add/remove `const` or `volatile` | No | Rare; dangerous if you modify an originally `const` object |
+| `reinterpret_cast<T>` | Low-level bit/address reinterpretation | No | Very low-level; avoid in normal application code |
+
+### 3. `static_cast<T>`
+
+Use `static_cast` for conversions C++ can verify at compile time.
+
+#### Numeric conversion
+
+```cpp
+double ratio = 2.75;
+int roundedDown = static_cast<int>(ratio); // 2; decimal part is discarded.
+
+int count = 500;
+double exactEnough = static_cast<double>(count); // 500.0
+```
+
+#### Safe inheritance conversion: derived → base (upcast)
+
+```cpp
+class Animal {
+public:
+    virtual ~Animal() = default;
+};
+
+class Dog : public Animal {};
+
+Dog dog;
+
+// Always safe: every Dog is also an Animal.
+Animal* animal = static_cast<Animal*>(&dog);
+```
+
+```text
+Dog object
+┌─────────────────────────┐
+│ Animal part             │  ◄── Animal* can view this safely
+│ Dog-specific part       │
+└─────────────────────────┘
+```
+
+#### Risky inheritance conversion: base → derived (downcast)
+
+```cpp
+Dog realDog;
+Animal* animal = &realDog;
+
+// Compiles, but static_cast does NOT check the real object at runtime.
+Dog* dog = static_cast<Dog*>(animal);
+```
+
+This is only safe when you already know `animal` truly points to a `Dog`.
+
+```cpp
+Animal plainAnimal;
+Animal* animal = &plainAnimal;
+
+// Compiles, but is dangerous: the real object is NOT a Dog.
+Dog* dog = static_cast<Dog*>(animal);
+
+// Using dog as a Dog is undefined behavior.
+```
+
+For an uncertain downcast, use `dynamic_cast` instead.
+
+> Rule: **Use `static_cast` for an upcast. Do not use it to “guess” a derived type.**
+
+---
+
+### 4. `dynamic_cast<T>`: checked downcasting
+
+`dynamic_cast` asks at runtime: “Is this object really the requested derived type?”
+
+The base class must be **polymorphic**—it needs at least one virtual function. A virtual destructor is enough.
+
+```cpp
+#include <iostream>
+
+class Animal {
+public:
+    virtual ~Animal() = default; // Makes Animal polymorphic.
+};
+
+class Dog : public Animal {
+public:
+    void bark() { std::cout << "Woof\n"; }
+};
+
+class Cat : public Animal {};
+
+void makeDogBark(Animal* animal) {
+    // Pointer dynamic_cast returns nullptr if the object is not a Dog.
+    if (Dog* dog = dynamic_cast<Dog*>(animal)) {
+        dog->bark(); // Valid: C++ confirmed that it is a Dog.
+    } else {
+        std::cout << "This animal is not a Dog\n";
+    }
+}
+
+int main() {
+    Dog dog;
+    Cat cat;
+
+    makeDogBark(&dog); // Woof
+    makeDogBark(&cat); // This animal is not a Dog
+}
+```
+
+```text
+Animal* ──► Dog object  → dynamic_cast<Dog*> returns a valid Dog*
+Animal* ──► Cat object  → dynamic_cast<Dog*> returns nullptr
+```
+
+For references, failure throws `std::bad_cast` instead of returning `nullptr`:
+
+```cpp
+#include <typeinfo>
+
+Animal& animal = cat;
+
+try {
+    Dog& dog = dynamic_cast<Dog&>(animal); // Throws: cat is not a Dog.
+    dog.bark();
+} catch (const std::bad_cast&) {
+    std::cout << "Not a Dog\n";
+}
+```
+
+Prefer the pointer form when failure is an expected possibility—it is easy to test for `nullptr`.
+
+---
+
+### 5. `const_cast<T>`: add or remove constness
+
+`const_cast` changes only whether the compiler sees an object as `const`; it does not change the object's real nature.
+
+```cpp
+void legacyPrint(char* text); // Imagine an old API that promises not to modify text.
+
+void printMessage(const char* message) {
+    // Sometimes used to call a legacy API. Only safe if legacyPrint does not write.
+    legacyPrint(const_cast<char*>(message));
+}
+```
+
+The dangerous mistake:
+
+```cpp
+const int original = 10;
+
+int* writable = const_cast<int*>(&original);
+
+// INVALID BEHAVIOR: original was truly declared const.
+// *writable = 20; // Undefined behavior.
+```
+
+This can be valid only when the original object was not `const`:
+
+```cpp
+int original = 10;                 // Not truly const.
+const int* readOnly = &original;   // View it as const.
+
+int* writable = const_cast<int*>(readOnly);
+*writable = 20;                    // Valid: original itself was mutable.
+```
+
+> Rule: **Use `const_cast` only for a well-understood legacy/API boundary. Never use it to modify an object declared `const`.**
+
+---
+
+### 6. `reinterpret_cast<T>`: low-level representation conversion
+
+`reinterpret_cast` can reinterpret an address or bits as an unrelated type. It is for low-level systems code, not ordinary application code.
+
+```cpp
+#include <cstdint>
+
+int value = 42;
+
+// Converts a pointer address to an integer-sized value.
+std::uintptr_t address = reinterpret_cast<std::uintptr_t>(&value);
+
+// Converts it back to the original pointer type.
+int* sameValue = reinterpret_cast<int*>(address);
+```
+
+This does **not** safely convert an `int` into a different, unrelated object type.
+
+```cpp
+int number = 42;
+
+// Avoid: treating int memory as a double object is undefined behavior.
+// double* wrong = reinterpret_cast<double*>(&number);
+// std::cout << *wrong;
+```
+
+If you need to copy raw bits between same-sized trivially copyable types in C++20, prefer `std::bit_cast` from `<bit>` rather than pointer tricks.
+
+---
+
+### 7. C-style casts: avoid them
+
+```cpp
+double price = 19.99;
+
+// Avoid: it could behave like static_cast, const_cast, or reinterpret_cast.
+int value = (int)price;
+
+// Prefer: visible and searchable intent.
+int betterValue = static_cast<int>(price);
+```
+
+Named casts help reviewers understand risk:
+
+```text
+static_cast       → ordinary conversion
+dynamic_cast      → runtime-checked inheritance conversion
+const_cast        → constness changed: inspect carefully
+reinterpret_cast  → low-level conversion: inspect very carefully
+```
+
+## Quick decision guide
+
+| You need to… | Prefer |
+| --- | --- |
+| Convert between numeric types | `static_cast<T>(value)` |
+| Convert derived pointer/reference to base | Usually implicit conversion or `static_cast` |
+| Convert base pointer/reference to derived, with uncertainty | `dynamic_cast<T*>` / `dynamic_cast<T&>` |
+| Call a legacy API that wrongly lacks `const` | Rare, carefully justified `const_cast` |
+| Work with raw addresses/bits in low-level code | Rare `reinterpret_cast`; consider `std::bit_cast` |
+| Make code short using `(T)value` | Do not; use a named cast instead |
+
+> Memory rule: **Default to `static_cast` for ordinary explicit conversion. Use `dynamic_cast` when you need C++ to verify the real derived type at runtime. Treat `const_cast` and `reinterpret_cast` as warning signs.**
