@@ -13,20 +13,34 @@ Example: when an order changes status, email, SMS, and analytics listeners can e
 
 > Core idea: **Observers subscribe to a subject and are notified when its state changes.**
 
-## Class relationship
+## UML class diagram — order status subscribers
 
 ```text
-             subscribe / unsubscribe
-Client ───────────────────────────────────┐
-                                           ▼
-┌───────────────────┐  notifies  ┌──────────────────────┐
-│   OrderSubject    │ ──────────►│ Observer interface   │
-│ - observers       │            │ + onStatusChanged() │
-│ + setStatus()     │            └──────────▲───────────┘
-└───────────────────┘                       │ implements
-                              ┌──────────────┴──────────────┐
-                              │                             │
-                     EmailObserver                  AnalyticsObserver
+┌─────────────────┐  subscribe(observer)  ┌────────────────────────────┐
+│     Client      │ ─────────────────────►│       OrderSubject         │
+├─────────────────┤                       ├────────────────────────────┤
+│ + main()        │                       │ - status: string           │
+└─────────────────┘                       │ - observers: collection     │
+                                          │ + subscribe(observer)     │
+                                          │ + unsubscribe(observer)   │
+                                          │ + setStatus(status)       │
+                                          │ - notify()                │
+                                          └──────────────┬─────────────┘
+                                                         │ notifies 0..*
+                                                         ▼
+                                          ┌────────────────────────────┐
+                                          │       OrderObserver        │
+                                          ├────────────────────────────┤
+                                          │ + onStatusChanged(status) │
+                                          └──────────────▲─────────────┘
+                                                         │ implements
+                                      ┌──────────────────┴──────────────────┐
+                                      │                                     │
+                         ┌────────────┴─────────┐             ┌────────────┴─────────┐
+                         │    EmailObserver     │             │  AnalyticsObserver   │
+                         ├──────────────────────┤             ├──────────────────────┤
+                         │ + onStatusChanged()  │             │ + onStatusChanged()  │
+                         └──────────────────────┘             └──────────────────────┘
 ```
 
 The subject stores references to observers, notifies them when its state changes, and can usually add/remove them. Concrete observers implement the same callback but perform different actions.

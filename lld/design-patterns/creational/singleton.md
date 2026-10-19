@@ -18,19 +18,27 @@ The two goals are:
 
 > Core idea: **A singleton gives controlled global access to exactly one instance.**
 
-## Class and object relationship
+## UML class diagram — shared `AppConfig`
 
 ```text
-OrderService ──calls──┐
-EmailWorker  ──calls───┼──► AppConfig::instance()
-WebHandler   ──calls───┘             │
-                                     │ returns a reference to
-                                     ▼
-                              one AppConfig object
-
-The constructor is private, so clients cannot create another AppConfig.
-The arrows all lead to the same object, not one object per caller.
+┌────────────────────┐       calls static instance()       ┌───────────────────────────┐
+│   OrderService     │ ──────────────────────────────────► │         AppConfig         │
+├────────────────────┤                                      ├───────────────────────────┤
+│ + placeOrder()     │                                      │ - environment: string    │
+└────────────────────┘                                      │ - AppConfig() [private]  │
+                                                            │ + instance(): AppConfig& │
+┌────────────────────┐       calls same accessor           │ + getEnvironment(): ref  │
+│    EmailWorker     │ ──────────────────────────────────► └─────────────┬─────────────┘
+├────────────────────┤                                                    │
+│ + sendEmail()      │                                      returns reference to one
+└────────────────────┘                                                    ▼
+                                                            ┌───────────────────────────┐
+                                                            │ one function-local object │
+                                                            │     AppConfig config      │
+                                                            └───────────────────────────┘
 ```
+
+Both clients obtain a reference to the same object. The private constructor prevents normal client code from creating another `AppConfig`.
 
 ---
 

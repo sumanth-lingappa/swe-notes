@@ -11,6 +11,32 @@ Imagine a notification system that starts with email, then later needs SMS, push
 
 The service should **send** a notification. It should not need to know the concrete class or setup needed to **create** every notification type.
 
+## UML class diagram — notification creators and products
+
+```text
+Client ──uses──► NotificationCreator
+                    ▲
+                    │ inherits; overrides createNotification()
+          ┌─────────┴─────────┐
+          │                   │
+EmailNotificationCreator  SMSNotificationCreator
+
+                 Notification
+                    ▲     ▲
+                    │     │ implements
+          ┌─────────┘     └─────────┐
+          │                         │
+ EmailNotification          SMSNotification
+
+EmailNotificationCreator ──creates──► EmailNotification
+SMSNotificationCreator   ──creates──► SMSNotification
+
+NotificationCreator: sendNotification(), createNotification()
+Notification:        send(message)
+```
+
+The shared creator workflow calls the overridable factory method, then uses the returned product through the `Notification` interface.
+
 ### The problem: client code chooses concrete classes
 
 ```cpp
@@ -36,13 +62,6 @@ Problems:
 ### The idea
 
 Factory Method moves the decision of **which product to create** into subclasses/implementations called **creators**.
-
-```text
-Client → ConcreteCreator → ConcreteProduct
-           ↑                    ↑
-           │                    │
-        Creator              Product interface
-```
 
 > Core idea: **Factory Method defines an interface for creating a product, while subclasses decide which concrete product to create.**
 

@@ -18,6 +18,33 @@ Client → PaymentProcessor interface ← PaymentAdapter → LegacyGateway
 
 > Core idea: **Adapter translates one interface into another that the client expects.**
 
+## UML class diagram — payment adapter
+
+```text
+┌───────────────────┐       calls        ┌────────────────────────────┐
+│      Checkout     │ ─────────────────► │   PaymentProcessor         │
+├───────────────────┤                    ├────────────────────────────┤
+│ + payForOrder()   │                    │ + pay(cents): void         │
+└───────────────────┘                    └──────────────▲─────────────┘
+                                                         │ implements
+                                                         │
+                                           ┌─────────────┴──────────────┐
+                                           │      PaymentAdapter        │
+                                           ├────────────────────────────┤
+                                           │ - gateway: LegacyGateway&  │
+                                           │ + pay(cents): void         │
+                                           └─────────────┬──────────────┘
+                                                         │ wraps / delegates
+                                                         ▼
+                                           ┌────────────────────────────┐
+                                           │       LegacyGateway        │
+                                           ├────────────────────────────┤
+                                           │ + makePayment(dollars)     │
+                                           └────────────────────────────┘
+```
+
+The adapter implements the interface Checkout already expects, converts cents to dollars, and delegates to the incompatible legacy API.
+
 ## C++: object adapter
 
 ```cpp

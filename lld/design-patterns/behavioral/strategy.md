@@ -21,6 +21,34 @@ Checkout ──has-a──► PaymentStrategy interface
 
 > Core idea: **Encapsulate a family of algorithms and make them interchangeable.**
 
+## UML class diagram — checkout with selectable payment
+
+```text
+┌────────────┐ chooses ┌────────────────────┐
+│   Client   │ ──────► │      Checkout      │
+└────────────┘         ├────────────────────┤
+                       │ - strategy         │
+                       │ + completeOrder()  │
+                       └─────────┬──────────┘
+                                 │ has one; delegates to
+                                 ▼
+                       ┌─────────────────────┐
+                       │  PaymentStrategy    │
+                       ├─────────────────────┤
+                       │ + pay(amount): void │
+                       └──────────▲──────────┘
+                                  │ implements
+                       ┌──────────┴──────────┐
+                       │                     │
+              ┌────────┴────────┐  ┌────────┴────────┐
+              │  CardPayment    │  │   UpiPayment    │
+              ├─────────────────┤  ├─────────────────┤
+              │ + pay(amount)   │  │ + pay(amount)   │
+              └─────────────────┘  └─────────────────┘
+```
+
+The client selects a concrete strategy and gives it to `Checkout`. Checkout delegates payment to the interface, so it does not branch on card versus UPI.
+
 ## C++
 
 ```cpp

@@ -18,6 +18,29 @@ Client → Notifier interface
 
 > Core idea: **Decorator wraps an object with the same interface and adds behavior before or after delegation.**
 
+## UML class diagram — logging an email notification
+
+```text
+┌────────────────────┐        uses        ┌────────────────────────────┐
+│       Client       │ ─────────────────►│         Notifier           │
+└────────────────────┘                    ├────────────────────────────┤
+                                          │ + send(message): void     │
+                                          └──────────────▲─────────────┘
+                                                         │ implements
+                                   ┌─────────────────────┴──────────────────┐
+                                   │                                        │
+                     ┌─────────────┴────────────┐             ┌─────────────┴────────────┐
+                     │     EmailNotifier        │             │    LoggingDecorator      │
+                     ├──────────────────────────┤             ├──────────────────────────┤
+                     │ + send(message): void    │             │ - wrapped: Notifier      │
+                     └──────────────────────────┘             │ + send(message): void    │
+                                                              └────────────┬─────────────┘
+                                                                           │ wraps / delegates
+                                                                           └──────► Notifier
+```
+
+`LoggingDecorator` is itself a `Notifier`, and it holds another `Notifier`. The wrapped object can be an `EmailNotifier` or another decorator, which makes runtime stacking possible.
+
 ## C++: notifications with optional logging
 
 ```cpp

@@ -19,6 +19,33 @@ FileSystemItem (component)
 
 > Core idea: **Treat one object and a tree of objects uniformly through a shared interface.**
 
+## UML class diagram — filesystem tree
+
+```text
+                         ┌────────────────────────────┐
+                         │      FileSystemItem        │
+                         ├────────────────────────────┤
+                         │ + getSize(): uintmax_t     │
+                         │ + print(depth): void       │
+                         └──────────────▲─────────────┘
+                                        │ implements
+                       ┌────────────────┴────────────────┐
+                       │                                 │
+          ┌────────────┴───────────┐       ┌─────────────┴───────────┐
+          │         File           │       │         Folder          │
+          ├────────────────────────┤       ├─────────────────────────┤
+          │ - name: string         │       │ - name: string          │
+          │ - size: uintmax_t      │       │ - children: collection  │
+          │ + getSize()            │       │ + add(item)             │
+          │ + print(depth)         │       │ + getSize()             │
+          └────────────────────────┘       │ + print(depth)          │
+                                           └────────────┬────────────┘
+                                                        │ contains 0..*
+                                                        └──────────► FileSystemItem
+```
+
+Each `Folder` contains zero or more `FileSystemItem`s, so a child can itself be a `File` or another `Folder`. Both types share the operations used by the client.
+
 ## C++: in-memory filesystem tree
 
 ```cpp

@@ -9,6 +9,34 @@ title: Builder
 
 Use Builder when an object has a few **required** fields but many **optional** fields.
 
+## UML class diagram — building a `UserProfile`
+
+```text
+┌────────────────────────────┐     creates/configures      ┌──────────────────────────────┐
+│           Client           │ ──────────────────────────► │ UserProfile::Builder         │
+├────────────────────────────┤                              ├──────────────────────────────┤
+│ + main()                   │                              │ - name, email: string        │
+└──────────────┬─────────────┘                              │ - age: int                   │
+               │                                            │ - location, bio: string      │
+               │ receives finished object                  │ - notificationsEnabled: bool │
+               │                                            │ + withAge(int): Builder&     │
+               │                                            │ + withLocation(...): Builder&│
+               │                                            │ + enableNotifications(): ... │
+               │                                            │ + build(): UserProfile      │
+               │                                            └──────────────┬───────────────┘
+               │                                                           │ «creates»
+               │                                                           ▼
+               │                                            ┌──────────────────────────────┐
+               └───────────────────────────────────────────│         UserProfile          │
+                                                            ├──────────────────────────────┤
+                                                            │ - name, email, location, bio │
+                                                            │ - age, notificationsEnabled  │
+                                                            │ + print()                    │
+                                                            └──────────────────────────────┘
+```
+
+The builder holds required and optional values while construction is in progress; `build()` validates them and returns the finished product. In this C++ example, `Builder` is nested inside `UserProfile`.
+
 Without it, constructors become hard to read:
 
 ```cpp
@@ -25,7 +53,7 @@ required values → Builder → optional named methods → build() → finished 
 ```
 
 ```cpp
-UserProfile profile = UserProfile::Builder("Asha", "asha@example.com")
+UserProfile profile = UserProfile::builder("Asha", "asha@example.com")
     .withAge(30)
     .withLocation("Bengaluru")
     .enableNotifications()
@@ -33,19 +61,6 @@ UserProfile profile = UserProfile::Builder("Asha", "asha@example.com")
 ```
 
 > Core idea: **Builder constructs a complex object step by step, keeping required and optional values clear and readable.**
-
-## Class relationship
-
-```text
-Client ──creates/configures──► UserProfile::Builder
-                                  │
-                                  │ build() creates
-                                  ▼
-                             UserProfile
-
-UserProfile contains its nested Builder type; the Builder temporarily
-holds construction values, then returns a finished UserProfile.
-```
 
 ---
 

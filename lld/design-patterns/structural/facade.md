@@ -37,19 +37,27 @@ Client ──► DeploymentFacade::deployApplication()
 
 > Core idea: **Facade provides a simple, unified interface to a complex subsystem.**
 
-## Class relationship
+## UML class diagram — deployment facade
 
 ```text
-                    calls one high-level operation
-Client ─────────────────────► DeploymentFacade
-                                   │
-                                   ├──has-a / uses──► VersionControlSystem
-                                   ├──has-a / uses──► BuildSystem
-                                   ├──has-a / uses──► TestingFramework
-                                   └──has-a / uses──► DeploymentTarget
+┌──────────────┐   calls   ┌────────────────────────┐
+│    Client    │ ────────► │   DeploymentFacade     │
+└──────────────┘            ├────────────────────────┤
+                            │ + deployApplication()  │
+                            │ + deployHotfix()       │
+                            └───────────┬────────────┘
+                                        │ uses / coordinates
+                 ┌──────────────────────┼──────────────────────┐
+                 ▼                      ▼                      ▼
+       VersionControlSystem        BuildSystem          TestingFramework
+                 └──────────────────────┬──────────────────────┘
+                                        ▼
+                              DeploymentTarget
 
-The facade coordinates these subsystem objects; they do not inherit from it.
+Workflow: pullLatestCode → build → runAllTests → deploy (only if tests pass).
 ```
+
+The facade coordinates the subsystems; they do not inherit from it. The free-function variant below provides the same simplified call, but receives the subsystem dependencies as parameters instead of storing them.
 
 ---
 

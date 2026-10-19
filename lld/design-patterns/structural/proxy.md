@@ -19,6 +19,32 @@ Client → Subject interface ← RealSubject
 
 > Core idea: **Proxy is a stand-in for a real object that controls access while preserving the same interface.**
 
+## UML class diagram — lazy image proxy
+
+```text
+┌────────────────┐       calls        ┌──────────────────────────┐
+│     Client     │ ──────────────────►│          Image           │
+└────────────────┘                    ├──────────────────────────┤
+                                      │ + getFileName(): string  │
+                                      │ + display(): void        │
+                                      └────────────▲─────────────┘
+                                                   │ implements
+                              ┌────────────────────┴───────────────────┐
+                              │                                        │
+                ┌─────────────┴─────────────┐          ┌───────────────┴────────────┐
+                │   HighResolutionImage     │          │         ImageProxy         │
+                ├───────────────────────────┤          ├────────────────────────────┤
+                │ - fileName: string        │          │ - fileName: string         │
+                │ + getFileName(): string   │          │ - realImage: optional image     │
+                │ + display(): void         │          │ + getFileName(): string    │
+                └───────────────────────────┘          │ + display(): void          │
+                                                       └──────────────┬─────────────┘
+                                                                      │ creates lazily / delegates
+                                                                      └────────► HighResolutionImage
+```
+
+The client depends only on `Image`. `ImageProxy` answers cheap requests itself and creates/forwards to the real image when `display()` is first called.
+
 ## When to use it
 
 - Defer expensive loading until it is needed (lazy/virtual proxy).
