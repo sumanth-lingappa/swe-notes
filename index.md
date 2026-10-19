@@ -4,6 +4,6 @@ title: SWE Notes
 permalink: /
 ---
 
-<meta http-equiv="refresh" content="0; url=/README.html">
+<meta http-equiv="refresh" content="0; url={{ '/README.html' | relative_url }}">
 
-If you are not redirected, [open the SWE Notes homepage](/README.html).
+If you are not redirected, [open the SWE Notes homepage]({{ '/README.html' | relative_url }}).

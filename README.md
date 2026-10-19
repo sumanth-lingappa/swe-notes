@@ -11,10 +11,10 @@ title: SWE Notes
 
 | Track | What it covers | Notes |
 | --- | --- | --- |
-| 🧩 [Low-Level Design](lld/) | C++ fundamentals, OOP, SOLID, and design patterns | [Open LLD notes](lld/) |
-| 🧠 [Data Structures & Algorithms](dsa/) | Data structures, problem-solving patterns, and algorithms | Coming soon |
-| 🏗️ [High-Level Design](hld/) | System-design fundamentals, building blocks, and case studies | Coming soon |
-| 🔗 [Resources](resources/) | Helpful articles, videos, and revision links | Coming soon |
+| 🧩 Low-Level Design | C++ fundamentals, OOP, SOLID, and design patterns | [Open C++ basics](lld/cpp-basics/cpp-basics.md) |
+| 🧠 Data Structures & Algorithms | Data structures, problem-solving patterns, and algorithms | Coming soon |
+| 🏗️ High-Level Design | System-design fundamentals, building blocks, and case studies | Coming soon |
+| 🔗 Resources | Helpful articles, videos, and revision links | Coming soon |
 
 ---
 
