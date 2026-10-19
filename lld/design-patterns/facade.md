@@ -1,3 +1,8 @@
+---
+layout: default
+title: Facade
+---
+
 # Facade: LLD interview quick reference
 
 ## What problem does Facade solve?

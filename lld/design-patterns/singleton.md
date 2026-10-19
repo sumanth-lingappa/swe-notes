@@ -1,3 +1,8 @@
+---
+layout: default
+title: Singleton
+---
+
 # Singleton: LLD interview quick reference
 
 ## What is a singleton?

@@ -1,3 +1,8 @@
+---
+layout: default
+title: Factory Method
+---
+
 # Factory Method: LLD interview quick reference
 
 ## What problem does Factory Method solve?

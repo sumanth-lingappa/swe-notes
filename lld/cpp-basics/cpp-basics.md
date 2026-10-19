@@ -1,3 +1,8 @@
+---
+layout: default
+title: C++ basics
+---
+
 # C++ basics: interview quick reference
 
 This note collects small but important C++ concepts for quick revision.

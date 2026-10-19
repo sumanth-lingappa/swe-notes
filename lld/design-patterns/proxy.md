@@ -1,3 +1,8 @@
+---
+layout: default
+title: Proxy
+---
+
 # Proxy: LLD interview quick reference
 
 ## What problem does Proxy solve?

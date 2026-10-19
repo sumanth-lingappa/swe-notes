@@ -1,3 +1,8 @@
+---
+layout: default
+title: Builder
+---
+
 # Builder pattern: LLD interview quick reference
 
 ## What problem does Builder solve?
