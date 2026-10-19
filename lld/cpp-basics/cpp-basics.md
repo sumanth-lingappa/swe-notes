@@ -567,6 +567,18 @@ Dog* dog = static_cast<Dog*>(animal);
 
 For an uncertain downcast, use `dynamic_cast` instead.
 
+```text
+             inheritance (“is-a”)
+Dog ─────────────────────────────▷ Animal ◁──────────────────────────── Cat
+                                      │
+                                      │ Animal* / Animal& can refer to
+                                      │ either derived object
+                                      ▼
+                           dynamic_cast<Dog*>
+                           succeeds for Dog;
+                           returns nullptr for Cat
+```
+
 > Rule: **Use `static_cast` for an upcast. Do not use it to “guess” a derived type.**
 
 ---

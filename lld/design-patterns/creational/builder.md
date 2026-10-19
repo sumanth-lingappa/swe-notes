@@ -34,6 +34,19 @@ UserProfile profile = UserProfile::Builder("Asha", "asha@example.com")
 
 > Core idea: **Builder constructs a complex object step by step, keeping required and optional values clear and readable.**
 
+## Class relationship
+
+```text
+Client ──creates/configures──► UserProfile::Builder
+                                  │
+                                  │ build() creates
+                                  ▼
+                             UserProfile
+
+UserProfile contains its nested Builder type; the Builder temporarily
+holds construction values, then returns a finished UserProfile.
+```
+
 ---
 
 ## C++: fluent nested builder

@@ -37,6 +37,20 @@ Client ──► DeploymentFacade::deployApplication()
 
 > Core idea: **Facade provides a simple, unified interface to a complex subsystem.**
 
+## Class relationship
+
+```text
+                    calls one high-level operation
+Client ─────────────────────► DeploymentFacade
+                                   │
+                                   ├──has-a / uses──► VersionControlSystem
+                                   ├──has-a / uses──► BuildSystem
+                                   ├──has-a / uses──► TestingFramework
+                                   └──has-a / uses──► DeploymentTarget
+
+The facade coordinates these subsystem objects; they do not inherit from it.
+```
+
 ---
 
 ## Is a Facade required to be a class?

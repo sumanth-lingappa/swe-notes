@@ -18,6 +18,20 @@ The two goals are:
 
 > Core idea: **A singleton gives controlled global access to exactly one instance.**
 
+## Class and object relationship
+
+```text
+OrderService ──calls──┐
+EmailWorker  ──calls───┼──► AppConfig::instance()
+WebHandler   ──calls───┘             │
+                                     │ returns a reference to
+                                     ▼
+                              one AppConfig object
+
+The constructor is private, so clients cannot create another AppConfig.
+The arrows all lead to the same object, not one object per caller.
+```
+
 ---
 
 ## C++: function-local static (Meyers singleton)
