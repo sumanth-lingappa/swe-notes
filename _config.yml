@@ -2,6 +2,7 @@ title: SWE Notes
 description: Practical quick-reference notes for software engineering.
 theme: jekyll-theme-cayman
 markdown: kramdown
-relative_links: true
+relative_links:
+  enabled: true
 url: https://sumanth-lingappa.github.io
 baseurl: /swe-notes
