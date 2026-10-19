@@ -3,7 +3,7 @@ layout: default
 title: Proxy
 ---
 
-# Proxy: LLD interview quick reference
+# Proxy: LLD quick reference
 
 ## What problem does Proxy solve?
 
@@ -17,7 +17,7 @@ Client → Subject interface ← RealSubject
                   └── decides whether, when, or how to call RealSubject
 ```
 
-> Interview sentence: **Proxy is a stand-in for a real object that controls access while preserving the same interface.**
+> Core idea: **Proxy is a stand-in for a real object that controls access while preserving the same interface.**
 
 ## When to use it
 

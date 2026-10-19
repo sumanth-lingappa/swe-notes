@@ -1,6 +1,6 @@
-# SWE Interview Notes
+# SWE Notes
 
-> A growing, practical reference for software engineering interview preparation—designed for fast revision on desktop or mobile.
+> A growing, practical reference for software engineering learning and revision—designed for fast revision on desktop or mobile.
 
 ## Start here
 
@@ -36,7 +36,7 @@
 1. Pick one topic from the table above.
 2. Read the **what problem does it solve?** section first.
 3. Study the commented code and the valid/invalid examples.
-4. Say the interview summary aloud without looking.
+4. Say the summary aloud without looking.
 5. Implement a small version from memory.
 
 ---
@@ -44,7 +44,7 @@
 ## Repository map
 
 ```text
-swe-interview-notes/
+swe-notes/
 ├── lld/
 │   ├── cpp-basics/
 │   └── design-patterns/
@@ -59,6 +59,6 @@ swe-interview-notes/
 ## Guiding principles
 
 - Prefer understanding over memorizing code.
-- Keep notes short enough to revise before an interview.
+- Keep notes short enough to revise quickly.
 - Include the purpose, valid examples, common mistakes, and one rule to remember.
 - Add practical examples in C++, Python, and Go when comparison helps.

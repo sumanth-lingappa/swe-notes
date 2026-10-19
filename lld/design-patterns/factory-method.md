@@ -3,7 +3,7 @@ layout: default
 title: Factory Method
 ---
 
-# Factory Method: LLD interview quick reference
+# Factory Method: LLD quick reference
 
 ## What problem does Factory Method solve?
 
@@ -44,7 +44,7 @@ Client → ConcreteCreator → ConcreteProduct
         Creator              Product interface
 ```
 
-> Interview sentence: **Factory Method defines an interface for creating a product, while subclasses decide which concrete product to create.**
+> Core idea: **Factory Method defines an interface for creating a product, while subclasses decide which concrete product to create.**
 
 ---
 
@@ -200,7 +200,7 @@ notifyUser(emailCreator);
 // auto secondOwner = std::move(creator);
 ```
 
-### C++ facts to say in an interview
+### C++ Key points
 
 - `Notification` is the Product interface; `EmailNotification` is a Concrete Product.
 - `createNotification()` is the Factory Method.
@@ -300,7 +300,7 @@ notify_user(EmailNotificationCreator("smtp.gmail.com"))  # Valid
 # NotificationCreator()
 ```
 
-### Python interview note
+### Python note
 
 - Python does not enforce interfaces as strictly as C++, but `ABC` and `@abstractmethod` express the design clearly.
 - Duck typing is also common: if objects have compatible `send` methods, Python may not need the abstract base class.
@@ -387,7 +387,7 @@ SendNotification(creator, "Your order was shipped")
 // SendNotification("email", "Your order was shipped")
 ```
 
-### Go facts to say in an interview
+### Go Key points
 
 - Interfaces are satisfied implicitly: no `implements` keyword is needed.
 - `EmailNotificationCreator` is a `NotificationCreator` because its method matches the interface exactly.
@@ -427,7 +427,7 @@ Avoid it when:
 - A small switch is stable and simpler than several creator classes.
 - The extra Creator classes would add boilerplate with no benefit.
 
-> Good interview answer: “Factory Method separates product creation from product usage. The creator owns the workflow, while concrete creators decide which concrete product is built.”
+> Concise summary: “Factory Method separates product creation from product usage. The creator owns the workflow, while concrete creators decide which concrete product is built.”
 
 ## Other common Factory Method examples
 

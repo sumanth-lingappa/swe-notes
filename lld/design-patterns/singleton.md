@@ -3,7 +3,7 @@ layout: default
 title: Singleton
 ---
 
-# Singleton: LLD interview quick reference
+# Singleton: LLD quick reference
 
 ## What is a singleton?
 
@@ -16,7 +16,7 @@ The two goals are:
 1. Stop other code from creating extra objects.
 2. Provide one controlled way to get the shared object.
 
-> Interview sentence: **A singleton gives controlled global access to exactly one instance.**
+> Core idea: **A singleton gives controlled global access to exactly one instance.**
 
 ---
 
@@ -73,7 +73,7 @@ int main() {
 }
 ```
 
-### C++ facts to say in an interview
+### C++ Key points
 
 - `static AppConfig config` is a **function-local static**: there is one object, constructed the first time execution reaches that line.
 - Its initialization is thread-safe since **C++11**.
@@ -127,7 +127,7 @@ g++ -std=c++17 singleton.cpp -o singleton
 
 ## Python: cached instance
 
-In Python, a module is often the simplest singleton. This class version is useful when an interview asks for a class-based singleton.
+In Python, a module is often the simplest singleton. This class version is useful when you want a class-based singleton.
 
 ```python
 import copy
@@ -175,7 +175,7 @@ third = copy.copy(first)
 print(first is third)           # True
 ```
 
-### Python facts to say in an interview
+### Python Key points
 
 - `__new__` returns the object; it is the place to enforce one cached instance.
 - `is` compares identity: `first is second` checks that both names refer to the same object.
@@ -266,7 +266,7 @@ func main() {
 }
 ```
 
-### Go facts to say in an interview
+### Go Key points
 
 - `sync.Once` runs its initialization function exactly once, even with multiple goroutines.
 - `GetAppConfig()` returns the same `*AppConfig` pointer each time.
@@ -326,7 +326,7 @@ Use it when there really should be one shared service or configuration source.
 
 Be cautious: a singleton is global state. It can make tests harder because code silently depends on a shared object. For services that may need different implementations in tests (for example, file storage or databases), dependency injection is often easier to test.
 
-> Good interview answer: “I use a singleton when one shared instance is genuinely required. For replaceable dependencies, I prefer passing an interface/dependency explicitly.”
+> Concise summary: “I use a singleton when one shared instance is genuinely required. For replaceable dependencies, I prefer passing an interface/dependency explicitly.”
 
 ## Other common singleton examples
 

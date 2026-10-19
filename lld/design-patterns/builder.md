@@ -3,7 +3,7 @@ layout: default
 title: Builder
 ---
 
-# Builder pattern: LLD interview quick reference
+# Builder pattern: LLD quick reference
 
 ## What problem does Builder solve?
 
@@ -32,7 +32,7 @@ UserProfile profile = UserProfile::Builder("Asha", "asha@example.com")
     .build();
 ```
 
-> Interview sentence: **Builder constructs a complex object step by step, keeping required and optional values clear and readable.**
+> Core idea: **Builder constructs a complex object step by step, keeping required and optional values clear and readable.**
 
 ---
 
@@ -154,7 +154,7 @@ UserProfile::builder(...)  → makes a temporary Builder
 .build()                   → validates and returns UserProfile
 ```
 
-### C++ facts to say in an interview
+### C++ Key points
 
 - The product is `UserProfile`; the builder temporarily holds values until `build()`.
 - Named methods make optional values self-documenting.
@@ -258,7 +258,7 @@ profile = (
 print(profile)  # UserProfile(name='Asha', email='asha@example.com')
 ```
 
-### Python interview note
+### Python note
 
 Python often uses keyword arguments or `dataclasses` for this problem:
 
@@ -380,7 +380,7 @@ func main() {
 }
 ```
 
-### Go facts to say in an interview
+### Go Key points
 
 - Builder methods use pointer receivers because they update one builder object.
 - They return `*UserProfileBuilder` to support chaining.
@@ -433,7 +433,7 @@ Avoid Builder when:
 - A struct/object literal or keyword arguments already make construction obvious.
 - The Builder would add more boilerplate than value.
 
-> Good interview answer: “I use Builder to avoid telescoping constructors and make complex construction readable. I validate in `build()`, then return a complete object.”
+> Concise summary: “I use Builder to avoid telescoping constructors and make complex construction readable. I validate in `build()`, then return a complete object.”
 
 ## Other common Builder examples
 

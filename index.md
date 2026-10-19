@@ -1,11 +1,11 @@
 ---
 layout: default
-title: SWE Interview Notes
+title: SWE Notes
 ---
 
-# SWE Interview Notes
+# SWE Notes
 
-Practical, mobile-friendly reference notes for software engineering interview preparation.
+Practical, mobile-friendly reference notes for software engineering learning and revision.
 
 ## Low-Level Design
 
@@ -27,7 +27,7 @@ Practical, mobile-friendly reference notes for software engineering interview pr
 
 1. Read the problem the concept solves.
 2. Study the commented code and valid/invalid examples.
-3. Say the one-line interview summary aloud.
+3. Say the one-line summary aloud.
 4. Implement a small version from memory.
 
 ## Coming next

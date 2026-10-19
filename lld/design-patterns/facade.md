@@ -3,7 +3,7 @@ layout: default
 title: Facade
 ---
 
-# Facade: LLD interview quick reference
+# Facade: LLD quick reference
 
 ## What problem does Facade solve?
 
@@ -35,7 +35,7 @@ Client ──► DeploymentFacade::deployApplication()
                      └──► DeploymentTarget
 ```
 
-> Interview sentence: **Facade provides a simple, unified interface to a complex subsystem.**
+> Core idea: **Facade provides a simple, unified interface to a complex subsystem.**
 
 ---
 
@@ -394,7 +394,7 @@ func (facade *DeploymentFacade) DeployHotfix(branch string, server string) bool 
 // deployment.DeployApplication("main", "production")
 ```
 
-### Go interview note
+### Go note
 
 For production code, define small interfaces such as `CodePuller`, `Builder`, `TestRunner`, and `Deployer` for the dependencies. Then a test can provide fake implementations. The Facade still coordinates them in one high-level method.
 
