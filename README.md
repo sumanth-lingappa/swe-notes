@@ -31,13 +31,29 @@ title: SWE Notes
 
 ### Design patterns
 
+#### Creational
+
 | Pattern | One-line memory aid | Reference |
 | --- | --- | --- |
-| Singleton | One controlled, shared instance | [Read →](lld/design-patterns/singleton.md) |
-| Builder | Construct a complex object step by step | [Read →](lld/design-patterns/builder.md) |
-| Factory Method | Let subclasses choose which product to create | [Read →](lld/design-patterns/factory-method.md) |
-| Facade | Simplify a complex subsystem behind one entry point | [Read →](lld/design-patterns/facade.md) |
-| Proxy | Control access to a real object through the same interface | [Read →](lld/design-patterns/proxy.md) |
+| Singleton | One controlled, shared instance | [Read →](lld/design-patterns/creational/singleton.md) |
+| Builder | Construct a complex object step by step | [Read →](lld/design-patterns/creational/builder.md) |
+| Factory Method | Let creator subclasses choose which product to create | [Read →](lld/design-patterns/creational/factory-method.md) |
+
+#### Structural
+
+| Pattern | One-line memory aid | Reference |
+| --- | --- | --- |
+| Adapter | Translate one interface into another the client expects | [Read →](lld/design-patterns/structural/adapter.md) |
+| Decorator | Wrap an object to add behavior through the same interface | [Read →](lld/design-patterns/structural/decorator.md) |
+| Composite | Treat an item and a group of items uniformly | [Read →](lld/design-patterns/structural/composite.md) |
+| Facade | Simplify a complex subsystem behind one entry point | [Read →](lld/design-patterns/structural/facade.md) |
+| Proxy | Control access to a real object through the same interface | [Read →](lld/design-patterns/structural/proxy.md) |
+
+#### Behavioral
+
+| Pattern | One-line memory aid | Reference |
+| --- | --- | --- |
+| Strategy | Make interchangeable algorithms selectable | [Read →](lld/design-patterns/behavioral/strategy.md) |
 
 ---
 
@@ -58,6 +74,9 @@ swe-notes/
 ├── lld/
 │   ├── cpp-basics/
 │   └── design-patterns/
+│       ├── creational/
+│       ├── structural/
+│       └── behavioral/
 ├── dsa/
 ├── hld/
 │   ├── fundamentals/
