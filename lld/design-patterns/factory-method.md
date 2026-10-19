@@ -423,3 +423,12 @@ Avoid it when:
 - The extra Creator classes would add boilerplate with no benefit.
 
 > Good interview answer: “Factory Method separates product creation from product usage. The creator owns the workflow, while concrete creators decide which concrete product is built.”
+
+## Other common Factory Method examples
+
+| Product interface | Concrete products | Creator chooses based on |
+| --- | --- | --- |
+| `PaymentProcessor` | Card, UPI, bank transfer | User payment choice or country. |
+| `DocumentParser` | JSON, CSV, XML | File extension/content type. |
+| `DatabaseConnection` | PostgreSQL, MySQL, SQLite | Application configuration. |
+| `UIWidget` | macOS, Windows, web button | Target platform. |

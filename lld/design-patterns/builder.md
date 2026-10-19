@@ -429,3 +429,12 @@ Avoid Builder when:
 - The Builder would add more boilerplate than value.
 
 > Good interview answer: “I use Builder to avoid telescoping constructors and make complex construction readable. I validate in `build()`, then return a complete object.”
+
+## Other common Builder examples
+
+| Product | Required inputs | Typical optional inputs |
+| --- | --- | --- |
+| HTTP request | URL | Headers, query parameters, body, timeout, retry policy. |
+| Database connection | Host/database | Port, credentials, TLS, connection-pool size. |
+| Pizza order | Size | Toppings, crust, extra cheese, delivery instructions. |
+| Test fixture | Main subject | Fake dependencies, seed data, feature flags. |

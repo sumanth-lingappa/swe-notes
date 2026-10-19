@@ -430,3 +430,12 @@ Use it when a common task coordinates several classes and clients should not nee
 Avoid it when the client truly needs detailed subsystem control, or when the “facade” merely forwards one call without reducing complexity.
 
 > Memory rule: **Facade hides a workflow, not necessarily every subsystem. A function is enough for one simple workflow; use a class when related workflows share dependencies.**
+
+## Other common Facade examples
+
+| Facade | Subsystems it coordinates | High-level methods |
+| --- | --- | --- |
+| Home theater | Projector, lights, amplifier, streaming player | `watchMovie()`, `endMovie()` |
+| Checkout | Inventory, payment, shipping, email | `placeOrder()` |
+| Travel booking | Flights, hotels, payments, itinerary | `bookTrip()` |
+| Video publishing | Upload, compression, storage, metadata, notifications | `publishVideo()` |

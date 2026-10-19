@@ -322,3 +322,14 @@ Use it when there really should be one shared service or configuration source.
 Be cautious: a singleton is global state. It can make tests harder because code silently depends on a shared object. For services that may need different implementations in tests (for example, file storage or databases), dependency injection is often easier to test.
 
 > Good interview answer: “I use a singleton when one shared instance is genuinely required. For replaceable dependencies, I prefer passing an interface/dependency explicitly.”
+
+## Other common singleton examples
+
+| Example | Why one shared instance can make sense |
+| --- | --- |
+| Logger | Centralizes log formatting and output destination. |
+| Metrics registry | Keeps one consistent registry of counters and gauges. |
+| Application configuration | Provides a single read-mostly configuration source. |
+| Thread pool | Coordinates a limited, shared set of worker threads. |
+
+Use these carefully: many can also be passed explicitly as dependencies, which makes tests easier.

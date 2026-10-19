@@ -27,6 +27,7 @@
 | Builder | Construct a complex object step by step | [Read →](lld/design-patterns/builder.md) |
 | Factory Method | Let subclasses choose which product to create | [Read →](lld/design-patterns/factory-method.md) |
 | Facade | Simplify a complex subsystem behind one entry point | [Read →](lld/design-patterns/facade.md) |
+| Proxy | Control access to a real object without changing its API | [Read →](lld/design-patterns/proxy.md) |
 
 ---
 
