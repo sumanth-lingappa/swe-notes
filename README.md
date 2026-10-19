@@ -1,3 +1,8 @@
+---
+layout: default
+title: SWE Notes
+---
+
 # SWE Notes
 
 > A growing, practical reference for software engineering learning and revision—designed for fast revision on desktop or mobile.
