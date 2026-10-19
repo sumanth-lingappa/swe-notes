@@ -54,6 +54,7 @@ title: SWE Notes
 | Pattern | One-line memory aid | Reference |
 | --- | --- | --- |
 | Strategy | Make interchangeable algorithms selectable | [Read →](lld/design-patterns/behavioral/strategy.md) |
+| Observer | Notify subscribers when a subject's state changes | [Read →](lld/design-patterns/behavioral/observer.md) |
 
 ---
 
