@@ -17,7 +17,12 @@
 
 ### C++ basics
 
-- [`explicit`, RAII, and smart pointers](lld/cpp-basics/cpp-basics.md) — safe conversions, ownership, and lifetime management.
+- [C++ basics quick reference](lld/cpp-basics/cpp-basics.md) — currently covers:
+  - `explicit` constructors and implicit conversions
+  - RAII and resource lifetime
+  - Smart pointers: `unique_ptr`, `shared_ptr`, and `weak_ptr`
+  - Borrowing with references and raw pointers
+  - Type casting: implicit conversions, `static_cast`, `dynamic_cast`, `const_cast`, and `reinterpret_cast`
 
 ### Design patterns
 
@@ -27,7 +32,7 @@
 | Builder | Construct a complex object step by step | [Read →](lld/design-patterns/builder.md) |
 | Factory Method | Let subclasses choose which product to create | [Read →](lld/design-patterns/factory-method.md) |
 | Facade | Simplify a complex subsystem behind one entry point | [Read →](lld/design-patterns/facade.md) |
-| Proxy | Control access to a real object without changing its API | [Read →](lld/design-patterns/proxy.md) |
+| Proxy | Control access to a real object through the same interface | [Read →](lld/design-patterns/proxy.md) |
 
 ---
 
