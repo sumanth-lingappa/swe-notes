@@ -26,6 +26,7 @@
 | Singleton | One controlled, shared instance | [Read →](lld/design-patterns/singleton.md) |
 | Builder | Construct a complex object step by step | [Read →](lld/design-patterns/builder.md) |
 | Factory Method | Let subclasses choose which product to create | [Read →](lld/design-patterns/factory-method.md) |
+| Facade | Simplify a complex subsystem behind one entry point | [Read →](lld/design-patterns/facade.md) |
 
 ---
 
