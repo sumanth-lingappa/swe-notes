@@ -21,7 +21,7 @@ Checkout ──has-a──► PaymentStrategy interface
 
 > Core idea: **Encapsulate a family of algorithms and make them interchangeable.**
 
-## UML class diagram — checkout with selectable payment
+## Class relationship and selection
 
 ```text
 ┌────────────┐ chooses ┌────────────────────┐
@@ -160,20 +160,7 @@ func main() {
 }
 ```
 
-## Class relationship and selection
-
-```text
-Client chooses strategy
-       │
-       ▼
-┌──────────────┐       uses       ┌─────────────────┐
-│   Checkout   │ ───────────────► │ PaymentStrategy │
-│   (context)  │                  └────────▲────────┘
-└──────────────┘                           │ implements
-                              ┌────────────┴──────────┐
-                              │                       │
-                         CardPayment              UpiPayment
-```
+## Valid and avoid
 
 ```cpp
 // Valid: change behavior by supplying another strategy.
