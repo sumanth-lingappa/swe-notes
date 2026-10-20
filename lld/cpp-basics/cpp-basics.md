@@ -965,3 +965,119 @@ reinterpret_cast  → low-level conversion: inspect very carefully
 | Make code short using `(T)value` | Do not; use a named cast instead |
 
 > Memory rule: **Default to `static_cast` for ordinary explicit conversion. Use `dynamic_cast` when you need C++ to verify the real derived type at runtime. Treat `const_cast` and `reinterpret_cast` as warning signs.**
+
+---
+
+## STL quick reference (C++17)
+
+The Standard Template Library (STL) gives you ready-made containers, algorithms, iterators, and utilities. In problem-solving code, prefer these over implementing a data structure from scratch unless the problem asks you to.
+
+### Containers and utilities
+
+Each row shows the header, a common declaration/use, typical complexity, and a pitfall. Complexity is for the named core operation; sizes and allocator behavior can affect details.
+
+| Type (header) | Quick example / best for | Typical complexity | Watch out for |
+| --- | --- | --- | --- |
+| `std::vector<T>` (`<vector>`) | `std::vector<int> v{3, 1, 2};` — default sequence; contiguous and fast random access. | Index `O(1)`; `push_back` amortized `O(1)`; insert/erase in middle `O(n)`. | Growth may reallocate and invalidate pointers, references, and iterators. `reserve(n)` can reduce reallocations. |
+| `std::array<T, N>` (`<array>`) | `std::array<int, 3> a{3, 1, 2};` — fixed-size sequence known at compile time. | Index `O(1)`; iteration `O(n)`. | Size cannot grow or shrink; it is still an STL container, unlike a raw array. |
+| `std::deque<T>` (`<deque>`) | `std::deque<int> d{2, 3}; d.push_front(1);` — efficient insertion/removal at both ends. | Index `O(1)`; push/pop at either end `O(1)`; middle insert/erase `O(n)`. | Not contiguous like `vector`; iterator invalidation rules differ. |
+| `std::list<T>` (`<list>`) | `std::list<int> xs{1, 3}; auto position = xs.begin(); ++position; xs.insert(position, 2);` — stable iterators and frequent insertion/erasure when you already have an iterator. | Insert/erase at a known iterator `O(1)`; search `O(n)`. | No random indexing; `xs[i]` is invalid. Usually `vector` is a better default. |
+| `std::forward_list<T>` (`<forward_list>`) | `std::forward_list<int> xs{1, 2};` — singly linked list, niche memory-constrained cases. | Insert/erase after a known iterator `O(1)`; search `O(n)`. | Forward-only; no `size()` member and no random indexing. |
+| `std::stack<T>` (`<stack>`) | `std::stack<int> st; st.push(4); int x = st.top(); st.pop();` — last-in, first-out (LIFO). | `top`, `push`, `pop` typically `O(1)`. | `pop()` removes but does not return the value; read `top()` first. Calling `top()`/`pop()` when empty is invalid. |
+| `std::queue<T>` (`<queue>`) | `std::queue<int> q; q.push(4); int x = q.front(); q.pop();` — first-in, first-out (FIFO), e.g. BFS. | `front`, `push`, `pop` typically `O(1)`. | `pop()` returns nothing; use `front()` first. Check `empty()` before access. |
+| `std::priority_queue<T>` (`<queue>`) | `std::priority_queue<int> maxHeap;` — always access the largest item first by default. | `top` `O(1)`; `push`/`pop` `O(log n)`. | It is a max-heap by default. A min-heap is `std::priority_queue<int, std::vector<int>, std::greater<int>>`. `pop()` does not return the top. |
+| `std::set<T>` / `std::multiset<T>` (`<set>`) | `std::set<int> unique{3, 1, 2};` — sorted keys; `multiset` allows duplicates. | Find/insert/erase `O(log n)`. | Iteration is sorted, not insertion order. Use `unordered_set` if ordering is unnecessary and average constant-time lookup is useful. |
+| `std::map<K, V>` / `std::multimap<K, V>` (`<map>`) | `std::map<std::string, int> score; score["Ada"] = 10;` — sorted key/value lookup; `multimap` permits repeated keys. | Find/insert/erase `O(log n)`. | `map[key]` inserts a default value when the key is absent. Use `find` or `count` when you only want to check whether a key exists. |
+| `std::unordered_set<T>` (`<unordered_set>`) | `std::unordered_set<int> seen; seen.insert(x);` — membership / deduplication without sorted order. | Find/insert/erase average `O(1)`, worst `O(n)`. | Order is unspecified; rehashing can invalidate iterators. Custom key types need a hash function and equality operation. |
+| `std::unordered_map<K, V>` (`<unordered_map>`) | `std::unordered_map<int, int> frequency; ++frequency[x];` — frequency tables and fast key lookup. | Find/insert/erase average `O(1)`, worst `O(n)`. | Same hash/rehash caveats. Do not rely on iteration order. |
+| `std::pair<A, B>` (`<utility>`) | `std::pair<int, std::string> p{1, "Ada"};` — carry two related values; use `p.first`, `p.second`. | Access either field `O(1)`. | Prefer a small named `struct` if fields have meaningful roles; `first`/`second` can hide intent. |
+| `std::tuple<...>` (`<tuple>`) | `auto t = std::make_tuple(7, "Ada", true); auto [id, name, active] = t;` — group a few values of different types (structured bindings are C++17). | `std::get<I>(t)` `O(1)`. | `std::get<0>` is less readable than a named struct for domain data. |
+| `std::optional<T>` (`<optional>`) | `std::optional<int> answer = 42; if (answer) use(*answer);` — represent “a value may be absent” (C++17). | Check/access `O(1)`. | Check `has_value()` or the boolean conversion before dereferencing; it is not a container for many values. |
+| `std::string` (`<string>`) | `std::string name = "Ada";` — owned text. | See the [string method reference](#stdstring-member-method-reference). | `size()` counts bytes for UTF-8; string insert/erase in the middle is `O(n)`. |
+
+### Algorithms
+
+Most algorithms take an iterator range `[first, last)`: `first` is included and `last` is excluded. They work with many containers, so include `<algorithm>` for these examples and `<numeric>` for numeric algorithms.
+
+| Algorithm (header) | Example / result | Typical complexity | Common pitfall |
+| --- | --- | --- | --- |
+| `std::sort` (`<algorithm>`) | `std::sort(v.begin(), v.end());` — ascending order. Use a comparator for custom order. | `O(n log n)`. | Requires random-access iterators; use with `vector`, `array`, or `deque`, not `list` (which has its own `.sort()`). Comparator must define a strict weak ordering; avoid `<=`. |
+| `std::stable_sort` (`<algorithm>`) | `std::stable_sort(v.begin(), v.end(), byScore);` — equivalent elements keep their prior relative order. | `O(n log n)` comparisons; may use extra memory. | Stability matters only when equal-key items must preserve input order. |
+| `std::find` (`<algorithm>`) | `auto it = std::find(v.begin(), v.end(), target);` | `O(n)`. | Not found means `it == v.end()`; don’t dereference `end()`. |
+| `std::count` (`<algorithm>`) | `auto n = std::count(v.begin(), v.end(), target);` | `O(n)`. | Counts exact matches; use a predicate with `count_if` for conditions. |
+| `std::count_if` (`<algorithm>`) | `auto n = std::count_if(v.begin(), v.end(), isEven);` | `O(n)`. | Predicate should return true for items to count. |
+| `std::lower_bound` (`<algorithm>`) | `auto it = std::lower_bound(v.begin(), v.end(), x);` — first item `>= x`. | `O(log n)` comparisons; random-access range also has `O(log n)` iterator movement. | Range must already be sorted using a compatible ordering. In `map`/`set`, prefer the container's `.lower_bound(key)` member. |
+| `std::upper_bound` (`<algorithm>`) | `auto it = std::upper_bound(v.begin(), v.end(), x);` — first item `> x`. | `O(log n)` comparisons; random-access range also has `O(log n)` iterator movement. | Requires a sorted range with compatible ordering. |
+| `std::binary_search` (`<algorithm>`) | `bool exists = std::binary_search(v.begin(), v.end(), x);` | `O(log n)` comparisons. | Requires sorted data; returns only true/false, not the matching position. |
+| `std::min_element` / `std::max_element` (`<algorithm>`) | `auto it = std::max_element(v.begin(), v.end());` | `O(n)`. | Returns an iterator; check for an empty range before dereferencing. |
+| `std::reverse` (`<algorithm>`) | `std::reverse(v.begin(), v.end());` | `O(n)`. | Mutates the range in place. |
+| `std::accumulate` (`<numeric>`) | `long long sum = std::accumulate(v.begin(), v.end(), 0LL);` | `O(n)`. | The initial value controls the accumulator type: use `0LL` for a `long long` sum to avoid `int` overflow. |
+| `std::iota` (`<numeric>`) | `std::iota(v.begin(), v.end(), 0);` — fills with `0, 1, 2, ...`. | `O(n)`. | Mutates every element; the starting value determines the value type. |
+| `std::all_of`, `any_of`, `none_of` (`<algorithm>`) | `bool anyNegative = std::any_of(v.begin(), v.end(), [](int x) { return x < 0; });` | `O(n)` worst case; may stop early. | Be clear whether the condition must hold for all, at least one, or none. |
+| `std::transform` (`<algorithm>`) | `std::transform(v.begin(), v.end(), v.begin(), [](int x) { return x * 2; });` | `O(n)`. | Output range must have enough space; this example overwrites the existing vector. |
+| `std::remove` + `vector::erase` | `v.erase(std::remove(v.begin(), v.end(), x), v.end());` — removes all `x` from a vector. | `O(n)`. | `std::remove` alone does not shrink the container; it moves kept values forward and returns a new logical end. |
+| `std::unique` + `vector::erase` | `std::sort(v.begin(), v.end()); v.erase(std::unique(v.begin(), v.end()), v.end());` | `O(n log n)` including sort; `unique` itself `O(n)`. | `unique` removes only consecutive duplicates, so sort first if you want global deduplication. |
+| `std::nth_element` (`<algorithm>`) | `std::nth_element(v.begin(), v.begin() + k, v.end());` — places the item for sorted index `k` there; partitions around it. | Average `O(n)`. | The entire vector is not sorted afterward. Ensure `k < v.size()`. |
+| `std::next_permutation` (`<algorithm>`) | `std::next_permutation(v.begin(), v.end());` — advances to next lexicographic permutation. | `O(n)` per call. | To enumerate all permutations in order, sort first; it returns false after the last permutation and resets to the first. |
+
+### Common interview recipes
+
+**Frequency counting:**
+
+```cpp
+#include <unordered_map>
+#include <vector>
+
+std::unordered_map<int, int> frequency;
+for (int value : values) {
+    ++frequency[value];
+}
+```
+
+**Sort, then remove duplicates:**
+
+```cpp
+#include <algorithm>
+#include <vector>
+
+std::sort(values.begin(), values.end());
+values.erase(std::unique(values.begin(), values.end()), values.end());
+```
+
+**Count occurrences in sorted data:**
+
+```cpp
+#include <algorithm>
+#include <vector>
+
+auto first = std::lower_bound(values.begin(), values.end(), target);
+auto afterLast = std::upper_bound(values.begin(), values.end(), target);
+auto count = afterLast - first; // Works here because vector iterators are random access.
+```
+
+**Keep the largest `k` values seen:**
+
+```cpp
+#include <functional>
+#include <queue>
+#include <vector>
+
+std::priority_queue<int, std::vector<int>, std::greater<int>> smallestFirst;
+for (int value : values) {
+    smallestFirst.push(value);
+    if (smallestFirst.size() > k) {
+        smallestFirst.pop(); // Remove the smallest; the heap retains the largest k.
+    }
+}
+```
+
+### Fast pitfalls checklist
+
+- `map[key]` inserts a default value if `key` was absent; use `.find()` when you only want to check.
+- `stack::pop()`, `queue::pop()`, and `priority_queue::pop()` remove an item but do not return it.
+- Check `empty()` before reading `top()`, `front()`, or `back()`.
+- A vector insertion/resize can invalidate iterators and references; do not keep them across a possible reallocation.
+- `lower_bound`, `upper_bound`, and `binary_search` need sorted data.
+- Generic `std::sort` cannot sort `std::list`; call `list.sort()` instead.
+- An unordered container has no stable iteration order and can have worst-case linear operations.
+- Prefer standard algorithms over handwritten loops when they directly express the operation; use a loop when it makes the logic clearer.
