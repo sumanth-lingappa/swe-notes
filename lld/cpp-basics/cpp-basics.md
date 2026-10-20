@@ -7,7 +7,9 @@ title: C++ basics
 
 This note collects small but important C++ concepts for quick revision.
 
-## `std::string`: member-method reference
+<details markdown="1">
+<summary><strong><code>std::string</code>: member-method reference</strong></summary>
+
 
 `std::string` is the standard string type for byte/`char` text. The table uses `s = "hello"` unless a row says otherwise. Overloads are grouped under one method name; the examples show common forms rather than every possible signature.
 
@@ -95,7 +97,10 @@ std::string trimmed = (first == std::string::npos)
 
 The standard defines the complete overload set and version additions in [`basic_string`](https://eel.is/c%2B%2Bdraft/string.classes).
 
-## `std::ostringstream`: build and format strings
+</details>
+
+<details markdown="1">
+<summary><strong><code>std::ostringstream</code>: build and format strings</strong></summary>
 
 `std::ostringstream` is an output stream that writes into an in-memory `std::string`. Use the familiar `<<` operator to combine text, numbers, and other printable values, then call `.str()` to get the completed string. It is a string-building tool, not a terminal-printing tool. It inherits formatting, output, and state-checking methods from `std::ostream`.
 
@@ -225,7 +230,10 @@ if (input >> count >> price) {
 
 For one simple value, `std::to_string` may be enough. For exact monetary arithmetic, prefer storing cents in an integer (or use a decimal-money type): `ostringstream` formats a `double`, but it does not fix floating-point precision issues.
 
-## `explicit`: prevent surprising automatic conversions
+</details>
+
+<details markdown="1">
+<summary><strong><code>explicit</code>: prevent surprising automatic conversions</strong></summary>
 
 ### The problem
 
@@ -381,9 +389,12 @@ For example, turning a server address into an `EmailNotification` should be inte
 
 `explicit` is not required by Factory Method, Builder, or any other design pattern. It is a C++ language feature that makes APIs safer and clearer.
 
+</details>
+
 ---
 
-## RAII and smart pointers: safe resource ownership
+<details markdown="1">
+<summary><strong>RAII and smart pointers: safe resource ownership</strong></summary>
 
 ### What is RAII?
 
@@ -645,9 +656,12 @@ Use raw `new` / `delete` mainly in low-level code that implements memory managem
 
 > Memory rule: **Use a raw pointer to borrow, not to own. Use an ordinary object when possible; otherwise prefer `unique_ptr`.**
 
+</details>
+
 ---
 
-## Type casting: converting one type to another
+<details markdown="1">
+<summary><strong>Type casting: converting one type to another</strong></summary>
 
 A **cast** tells C++ to treat or convert a value as another type.
 
@@ -953,7 +967,10 @@ const_cast        → constness changed: inspect carefully
 reinterpret_cast  → low-level conversion: inspect very carefully
 ```
 
-## Quick decision guide
+</details>
+
+<details markdown="1">
+<summary><strong>Type-casting quick decision guide</strong></summary>
 
 | You need to… | Prefer |
 | --- | --- |
@@ -966,9 +983,12 @@ reinterpret_cast  → low-level conversion: inspect very carefully
 
 > Memory rule: **Default to `static_cast` for ordinary explicit conversion. Use `dynamic_cast` when you need C++ to verify the real derived type at runtime. Treat `const_cast` and `reinterpret_cast` as warning signs.**
 
+</details>
+
 ---
 
-## STL quick reference (C++17)
+<details markdown="1">
+<summary><strong>STL quick reference (C++17)</strong></summary>
 
 The Standard Template Library (STL) gives you ready-made containers, algorithms, iterators, and utilities. In problem-solving code, prefer these over implementing a data structure from scratch unless the problem asks you to.
 
@@ -1081,3 +1101,5 @@ for (int value : values) {
 - Generic `std::sort` cannot sort `std::list`; call `list.sort()` instead.
 - An unordered container has no stable iteration order and can have worst-case linear operations.
 - Prefer standard algorithms over handwritten loops when they directly express the operation; use a loop when it makes the logic clearer.
+
+</details>
