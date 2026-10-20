@@ -7,6 +7,94 @@ title: C++ basics
 
 This note collects small but important C++ concepts for quick revision.
 
+## `std::string`: member-method reference
+
+`std::string` is the standard string type for byte/`char` text. The table uses `s = "hello"` unless a row says otherwise. Overloads are grouped under one method name; the examples show common forms rather than every possible signature.
+
+Add this header:
+
+```cpp
+#include <string>
+```
+
+| Group | Method | Example input/use | Return value or result |
+| --- | --- | --- | --- |
+| Create/assign | `operator=` | `s = "hi";` | `s` becomes `"hi"`; returns `s` by reference. |
+| Create/assign | `assign(...)` | `s.assign("hey");` | `s` becomes `"hey"`; returns `s` by reference. Can also assign a substring, count of characters, or iterator range. |
+| Create/assign | `get_allocator()` | `auto a = s.get_allocator();` | Returns the allocator object used by `s`; usually only needed for advanced memory-management code. |
+| Read characters | `at(pos)` | `s.at(1)` | `'e'`; checks bounds and throws `std::out_of_range` if `pos >= s.size()`. |
+| Read characters | `operator[](pos)` | `s[1]` | `'e'`; does not perform normal bounds checking. |
+| Read characters | `front()` | `s.front()` | First character, `'h'`. Do not call on an empty string. |
+| Read characters | `back()` | `s.back()` | Last character, `'o'`. Do not call on an empty string. |
+| Read characters | `data()` | `s.data()` | Pointer to the characters; in modern C++, the character storage is null-terminated. |
+| Read characters | `c_str()` | `s.c_str()` | `const char*` view of `"hello\0"`, suitable for C APIs; do not modify it. |
+| Iterate | `begin()`, `cbegin()` | `*s.begin()` | Iterator / const iterator to `'h'`. |
+| Iterate | `end()`, `cend()` | `s.begin() != s.end()` | End iterator is one past the last character; never dereference it. |
+| Iterate | `rbegin()`, `crbegin()` | `*s.rbegin()` | Reverse iterator / const reverse iterator to `'o'`. |
+| Iterate | `rend()`, `crend()` | `s.rbegin() != s.rend()` | Reverse end iterator; one past the last character in reverse order. |
+| Size/capacity | `empty()` | `s.empty()` | `false`; says whether `size() == 0`. |
+| Size/capacity | `size()`, `length()` | `s.size()` | `5`; both return the number of `char` elements. |
+| Size/capacity | `max_size()` | `s.max_size()` | Maximum size this string could theoretically hold; implementation-dependent. |
+| Size/capacity | `capacity()` | `s.capacity()` | Allocated character capacity; at least `size()`, exact value is implementation-dependent. |
+| Size/capacity | `reserve(n)` | `s.reserve(100);` | Requests capacity of at least `100`; does not change the string's size or text. |
+| Size/capacity | `shrink_to_fit()` | `s.shrink_to_fit();` | Requests reduced capacity; the request is non-binding and text is unchanged. |
+| Modify | `clear()` | `s.clear();` | `s` becomes empty. |
+| Modify | `insert(...)` | `s.insert(1, "ey");` | `s` becomes `"heyello"`; inserts at a position. Overloads can insert characters, strings, counts, or ranges. |
+| Modify | `erase(...)` | `s.erase(1, 2);` | `s` becomes `"hlo"`; removes up to 2 characters starting at index 1. |
+| Modify | `push_back(ch)` | `s.push_back('!');` | `s` becomes `"hello!"`; appends one character. |
+| Modify | `pop_back()` | `s.pop_back();` | `s` becomes `"hell"`; removes the last character. Do not call on an empty string. |
+| Modify | `append(...)` | `s.append("!");` | `s` becomes `"hello!"`; appends text, a count of characters, or a range. |
+| Modify | `operator+=` | `s += "!";` | `s` becomes `"hello!"`; appends a string, C string, or single character. |
+| Modify | `replace(...)` | `s.replace(1, 2, "ipp");` | `s` becomes `"hipplo"`; replaces 2 characters starting at index 1. |
+| Modify | `resize(n[, ch])` | `s.resize(3);` | `s` becomes `"hel"`; shrinking removes the end. Growing appends `ch` (or `\0` if omitted). |
+| Modify | `copy(buffer, count, pos)` | `char out[4]; auto n = s.copy(out, 3, 1);` | Copies `"ell"` into `out`, returns `3`; does **not** append a null terminator. |
+| Modify | `swap(other)` | `s.swap(other);` | Exchanges the contents of `s` and `other`; returns `void`. |
+| Modify | `resize_and_overwrite(n, op)` (C++23) | `s.resize_and_overwrite(3, [](char* p, std::size_t n) { p[0]='c'; p[1]='a'; p[2]='t'; return n; });` | `s` becomes `"cat"`; lets a callback write into the string's writable buffer and return the resulting length. Advanced; follow the callback requirements carefully. |
+| Modify ranges | `append_range(r)` (C++23) | `s.append_range(std::string("!"));` | Appends the range; `s` becomes `"hello!"`. |
+| Modify ranges | `insert_range(pos, r)` (C++23) | `s.insert_range(s.begin() + 1, std::string("ey"));` | Inserts the range at the iterator; `s` becomes `"heyello"`. |
+| Modify ranges | `replace_with_range(first, last, r)` (C++23) | `s.replace_with_range(s.begin() + 1, s.begin() + 3, std::string("ipp"));` | Replaces the selected range; `s` becomes `"hipplo"`. |
+| Search | `find(value[, pos])` | `s.find("ll")` | `2`, the first match at or after `pos` (default `0`); returns `std::string::npos` if not found. |
+| Search | `rfind(value[, pos])` | `s.rfind('l')` | `3`, the last matching position at or before `pos` (default: search from the end); or `npos`. |
+| Search | `find_first_of(chars[, pos])` | `s.find_first_of("aeiou")` | `1`, first character in `s` that is any character from `chars`; or `npos`. |
+| Search | `find_first_not_of(chars[, pos])` | `s.find_first_not_of("he")` | `2`, first character not present in `chars`; or `npos`. |
+| Search | `find_last_of(chars[, pos])` | `s.find_last_of("lo")` | `4`, last character in `s` that is any character from `chars`; or `npos`. |
+| Search | `find_last_not_of(chars[, pos])` | `s.find_last_not_of("lo")` | `1`, last character not present in `chars`; or `npos`. |
+| Search | `starts_with(value)` (C++20) | `s.starts_with("he")` | `true`; checks whether the beginning matches. |
+| Search | `ends_with(value)` (C++20) | `s.ends_with("lo")` | `true`; checks whether the end matches. |
+| Search | `contains(value)` (C++23) | `s.contains("ll")` | `true`; checks whether the substring/character exists. Before C++23, use `find(...) != std::string::npos`. |
+| Extract/compare | `substr(pos[, count])` | `s.substr(1, 3)` | A new string, `"ell"`; `count` means number of characters, not ending index. |
+| Extract/compare | `compare(other)` | `s.compare("hello")` | `0` if equal, negative if this string sorts before `other`, positive if after. Prefer `==`, `<`, etc. for ordinary comparisons. |
+| Static constant | `npos` | `s.find("x") == std::string::npos` | Special value meaning “no position found”; it is not a boolean. |
+
+### Quick examples
+
+```cpp
+std::string text = "  hello  ";
+
+const auto at = text.find("hello");
+if (at != std::string::npos) {
+    std::string word = text.substr(at, 5); // "hello"
+}
+
+const std::string whitespace = " \t\n\r";
+const auto first = text.find_first_not_of(whitespace);
+const auto last = text.find_last_not_of(whitespace);
+std::string trimmed = (first == std::string::npos)
+    ? ""
+    : text.substr(first, last - first + 1); // "hello"
+```
+
+### Important notes
+
+- The table groups overloads by method name; it is a practical reference, not a listing of every signature.
+- `size()` counts `char` elements (bytes for `std::string`), not user-perceived Unicode characters. A UTF-8 character can occupy multiple bytes.
+- `capacity()` is storage reserved by the string; `size()` is the number of characters currently in it.
+- `std::string` has no built-in `trim()` or `toUpper()` member. Use standard algorithms or write a helper.
+- `operator+`, comparisons (`==`, `<`), `std::getline`, `std::erase`, and `std::stoi` are related non-member functions/utilities, not `std::string` member methods.
+- Methods marked C++20/C++23 require compiling with an appropriate standard; common interview environments may use C++17, where those rows won't compile.
+
+The standard defines the complete overload set and version additions in [`basic_string`](https://eel.is/c%2B%2Bdraft/string.classes).
+
 ## `explicit`: prevent surprising automatic conversions
 
 ### The problem
