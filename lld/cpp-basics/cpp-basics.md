@@ -95,6 +95,136 @@ std::string trimmed = (first == std::string::npos)
 
 The standard defines the complete overload set and version additions in [`basic_string`](https://eel.is/c%2B%2Bdraft/string.classes).
 
+## `std::ostringstream`: build and format strings
+
+`std::ostringstream` is an output stream that writes into an in-memory `std::string`. Use the familiar `<<` operator to combine text, numbers, and other printable values, then call `.str()` to get the completed string. It is a string-building tool, not a terminal-printing tool. It inherits formatting, output, and state-checking methods from `std::ostream`.
+
+Include:
+
+```cpp
+#include <iomanip>  // std::fixed, std::setprecision, std::setw, std::setfill
+#include <locale>   // std::locale, if changing locale
+#include <sstream>  // std::ostringstream
+#include <string>
+```
+
+### Basic use
+
+```cpp
+std::ostringstream out;
+out << "Order #" << 42 << " costs $" << 12.5;
+
+std::string message = out.str();
+// message == "Order #42 costs $12.5"
+```
+
+The stream is a temporary string-building workspace. It does not print to the terminal; `std::cout` does that.
+
+### Format a balance to two decimal places
+
+```cpp
+#include <iomanip>
+#include <sstream>
+#include <string>
+
+std::string accountInfo(
+    const std::string& ownerName,
+    const std::string& accountNumber,
+    double balance)
+{
+    std::ostringstream out;
+    out << ownerName << " (" << accountNumber << ") | Balance: $"
+        << std::fixed << std::setprecision(2) << balance;
+    return out.str();
+}
+
+// accountInfo("Asha", "1234", 12.5)
+// -> "Asha (1234) | Balance: $12.50"
+```
+
+`std::fixed` makes precision mean digits after the decimal point. With `std::fixed << std::setprecision(2)`, `12.5` becomes `12.50`. Without `std::fixed`, precision means significant digits instead.
+
+### Useful stream operations and formatting tools
+
+| Name | What it does | Example | Result / note |
+| --- | --- | --- | --- |
+| `operator<<` | Appends a value to the stream using its output formatting. | `out << "count=" << 3;` | Buffer contains `count=3`. Works with strings, characters, numbers, and types that define stream output. |
+| `str()` | Gets a copy of the current buffer as a `std::string`. | `std::string text = out.str();` | Returns all text written so far. |
+| `str(newText)` | Replaces the buffer contents. | `out.str("start");` | Buffer becomes `start`. This does not reset stream error flags. |
+| `clear()` | Resets stream state flags such as `failbit`; it does **not** erase buffered text. | `out.clear();` | Stream state is usable again. To erase text too, call `out.str("");`. |
+| `precision(n)` | Sets floating-point precision. | `out.precision(2);` | With default formatting, means significant digits; with `std::fixed`, means digits after the decimal. |
+| `width()` / `width(n)` | Gets/sets the minimum width for the next formatted field. | `out.width(4); out << 7;` | Writes three leading spaces and `7`; width resets after the next formatted field. |
+| `fill()` / `fill(ch)` | Gets/sets the padding character. | `out.fill('0'); out << std::setw(4) << 7;` | Writes `0007`; fill remains set until changed. |
+| `flags()` / `setf()` / `unsetf()` | Reads or changes formatting flags. | `out.setf(std::ios::fixed);` | Enables fixed decimal formatting. Manipulators like `std::fixed` are usually easier to read. |
+| `imbue(locale)` / `getloc()` | Sets or gets the stream's locale. | `out.imbue(std::locale(""));` | Locale can affect numeric formatting, such as decimal separators; requires `<locale>`. |
+| `std::fixed` | Formats floating-point values in fixed decimal notation. | `out << std::fixed << 12.5;` | Writes `12.500000` by default (default precision is commonly 6). Pair with `std::setprecision`. |
+| `std::setprecision(n)` | Sets precision for subsequent floating-point output. | `out << std::fixed << std::setprecision(2) << 12.5;` | Writes `12.50`. Requires `<iomanip>`. |
+| `std::setw(n)` | Sets the minimum width of the **next** formatted field. | `out << std::setw(4) << 7;` | Writes three leading spaces, then `7`. Requires `<iomanip>`. |
+| `std::setfill(ch)` | Chooses the padding character used by width formatting. | `out << std::setfill('0') << std::setw(4) << 7;` | Writes `0007`. Requires `<iomanip>`. |
+| `std::left`, `std::right` | Chooses alignment when a field is wider than its contents. | `out << std::left << std::setw(6) << "Hi";` | Writes `Hi` followed by four spaces. Alignment setting remains active. |
+| `std::boolalpha` | Prints booleans as words instead of `1` or `0`. | `out << std::boolalpha << true;` | Writes `true`; setting remains active. |
+| `std::hex`, `std::oct`, `std::dec` | Chooses the base for integer output. | `out << std::hex << 255;` | Writes `ff`; use `std::dec` to return to decimal. |
+| `view()` (C++20) | Returns a non-owning view of the current buffer. | `std::string_view v = out.view();` | Reads the current characters without copying. Include `<string_view>`; the view can be invalidated when the stream changes or is destroyed. |
+| `put(ch)` | Writes one character. | `out.put('!');` | Appends `!`; equivalent in spirit to `out << '!'`. |
+| `write(ptr, count)` | Writes exactly `count` characters from a buffer. | `out.write("hey!", 3);` | Appends `hey`; does not stop at a null character. |
+| `tellp()` | Reports the current output position. | `auto position = out.tellp();` | Returns a stream position; can be used with `seekp` for positioning. |
+| `seekp(position)` | Moves the output position. | `out.seekp(0);` | The next write starts at the requested position, if supported by the buffer. Usually unnecessary for basic string building. |
+| `good()`, `fail()`, `bad()`, `eof()` | Check stream state. | `if (out.fail()) { /* handle error */ }` | Return `bool`. These are inherited stream methods; output streams rarely need explicit state checks in simple examples. |
+| `rdstate()` | Gets the current state flags. | `auto state = out.rdstate();` | Returns a state bitmask such as `goodbit` or `failbit`; mostly for advanced stream handling. |
+| `setstate(flags)` | Adds error/state flags. | `out.setstate(std::ios::failbit);` | Marks the stream as failed; normally the stream sets these flags itself. |
+| `exceptions(mask)` | Chooses which state flags cause exceptions. | `out.exceptions(std::ios::failbit);` | Future failures matching the mask throw; advanced error handling. |
+| `rdbuf()` | Gets the underlying string buffer. | `auto* buffer = out.rdbuf();` | Returns a pointer to the associated stream buffer; usually not needed for everyday formatting. |
+| `swap(other)` | Swaps the stream state and underlying buffer with another string stream. | `out.swap(other);` | Exchanges their buffers and stream settings; an advanced operation. |
+| `std::flush` | Requests that a stream flush pending output. | `out << std::flush;` | Usually unnecessary for an in-memory string stream; more relevant to terminal/file output streams. |
+
+Formatting settings such as `fixed`, `boolalpha`, and integer base remain active for later insertions on the same stream. `setw` applies only to the next field.
+
+### Reusing a stream
+
+```cpp
+std::ostringstream out;
+out << "first";
+
+out.str(""); // Erase the accumulated text.
+out.clear(); // Reset error flags, if any.
+
+out << "second";
+std::string result = out.str(); // "second"
+```
+
+### Related string streams
+
+| Type | Direction | Typical use |
+| --- | --- | --- |
+| `std::ostringstream` | Write values into a string. | Build a formatted message or report. |
+| `std::istringstream` | Read/parse values from a string. | Parse fields from text with `>>`. |
+| `std::stringstream` | Both read and write. | Use only when you need both directions on the same stream. |
+
+Parsing example:
+
+```cpp
+#include <sstream>
+#include <string>
+
+std::istringstream input("42 3.5");
+int count;
+double price;
+
+if (input >> count >> price) {
+    // count == 42, price == 3.5
+}
+```
+
+### When it is useful
+
+- Build a return string from multiple fields and types without a long chain of `+` operations.
+- Format numbers consistently in account summaries, receipts, logs, and reports.
+- Control decimal places, padding, alignment, boolean words, or integer bases.
+- Parse structured values from an existing string with `std::istringstream`.
+- Write a helper that returns formatted text instead of printing it directly.
+
+For one simple value, `std::to_string` may be enough. For exact monetary arithmetic, prefer storing cents in an integer (or use a decimal-money type): `ostringstream` formats a `double`, but it does not fix floating-point precision issues.
+
 ## `explicit`: prevent surprising automatic conversions
 
 ### The problem

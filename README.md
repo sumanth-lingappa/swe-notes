@@ -24,6 +24,7 @@ title: SWE Notes
 
 - [C++ basics quick reference](lld/cpp-basics/cpp-basics.md) — currently covers:
   - `std::string` member methods, searching, slicing, modifying, and trimming
+  - `std::ostringstream` for building strings and formatting numbers
   - `explicit` constructors and implicit conversions
   - RAII and resource lifetime
   - Smart pointers: `unique_ptr`, `shared_ptr`, and `weak_ptr`
