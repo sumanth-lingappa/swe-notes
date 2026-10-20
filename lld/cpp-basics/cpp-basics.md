@@ -8,7 +8,7 @@ title: C++ basics
 This note collects small but important C++ concepts for quick revision.
 
 <details markdown="1">
-<summary><strong><code>std::string</code>: member-method reference</strong></summary>
+<summary><strong>1. <code>std::string</code>: member-method reference</strong></summary>
 
 
 `std::string` is the standard string type for byte/`char` text. The table uses `s = "hello"` unless a row says otherwise. Overloads are grouped under one method name; the examples show common forms rather than every possible signature.
@@ -100,7 +100,7 @@ The standard defines the complete overload set and version additions in [`basic_
 </details>
 
 <details markdown="1">
-<summary><strong><code>std::ostringstream</code>: build and format strings</strong></summary>
+<summary><strong>2. <code>std::ostringstream</code>: build and format strings</strong></summary>
 
 `std::ostringstream` is an output stream that writes into an in-memory `std::string`. Use the familiar `<<` operator to combine text, numbers, and other printable values, then call `.str()` to get the completed string. It is a string-building tool, not a terminal-printing tool. It inherits formatting, output, and state-checking methods from `std::ostream`.
 
@@ -233,7 +233,7 @@ For one simple value, `std::to_string` may be enough. For exact monetary arithme
 </details>
 
 <details markdown="1">
-<summary><strong><code>explicit</code>: prevent surprising automatic conversions</strong></summary>
+<summary><strong>3. <code>explicit</code>: prevent surprising automatic conversions</strong></summary>
 
 ### The problem
 
@@ -394,7 +394,7 @@ For example, turning a server address into an `EmailNotification` should be inte
 ---
 
 <details markdown="1">
-<summary><strong>RAII and smart pointers: safe resource ownership</strong></summary>
+<summary><strong>4. RAII and smart pointers: safe resource ownership</strong></summary>
 
 ### What is RAII?
 
@@ -661,7 +661,7 @@ Use raw `new` / `delete` mainly in low-level code that implements memory managem
 ---
 
 <details markdown="1">
-<summary><strong>Type casting: converting one type to another</strong></summary>
+<summary><strong>5. Type casting: converting one type to another</strong></summary>
 
 A **cast** tells C++ to treat or convert a value as another type.
 
@@ -970,7 +970,7 @@ reinterpret_cast  → low-level conversion: inspect very carefully
 </details>
 
 <details markdown="1">
-<summary><strong>Type-casting quick decision guide</strong></summary>
+<summary><strong>6. Type-casting quick decision guide</strong></summary>
 
 | You need to… | Prefer |
 | --- | --- |
@@ -988,7 +988,7 @@ reinterpret_cast  → low-level conversion: inspect very carefully
 ---
 
 <details markdown="1">
-<summary><strong>STL quick reference (C++17)</strong></summary>
+<summary><strong>7. STL quick reference (C++17)</strong></summary>
 
 The Standard Template Library (STL) gives you ready-made containers, algorithms, iterators, and utilities. In problem-solving code, prefer these over implementing a data structure from scratch unless the problem asks you to.
 
